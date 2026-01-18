@@ -26,21 +26,29 @@ jobs:
           VERSION="${{ github.event.client_payload.version || github.event.inputs.version }}"
           SHA256="${{ github.event.client_payload.sha256 || github.event.inputs.sha256 }}"
 
-          cat > Casks/humanboard.rb << EOF
-          cask "humanboard" do
-            version "$VERSION"
-            sha256 "$SHA256"
+          cat > Casks/humanboard.rb << 'EOF'
+cask "humanboard" do
+  version "$VERSION"
+  sha256 "$SHA256"
 
-            url "https://github.com/manav03panchal/humanboard/releases/download/v#{version}/Humanboard.dmg"
-            name "Humanboard"
-            desc "Desktop productivity app"
-            homepage "https://github.com/manav03panchal/humanboard"
+  url "https://github.com/manav03panchal/humanboard/releases/download/v#{version}/Humanboard.dmg"
+  name "Humanboard"
+  desc "Desktop productivity app"
+  homepage "https://github.com/manav03panchal/humanboard"
 
-            depends_on macos: ">= :big_sur"
+  depends_on macos: ">= :big_sur"
 
-            app "Humanboard.app"
-          end
-          EOF
+  app "Humanboard.app"
+
+  postflight do
+    system_command "/usr/bin/xattr",
+                   args: ["-cr", "#{appdir}/Humanboard.app"],
+                   sudo: true
+  end
+end
+EOF
+          sed -i "s/\$VERSION/$VERSION/g" Casks/humanboard.rb
+          sed -i "s/\$SHA256/$SHA256/g" Casks/humanboard.rb
 
       - name: Commit and push
         run: |

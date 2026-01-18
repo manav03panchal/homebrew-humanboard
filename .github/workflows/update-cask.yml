@@ -1,0 +1,52 @@
+name: Update Cask
+
+on:
+  repository_dispatch:
+    types: [update-cask]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (without v prefix)'
+        required: true
+      sha256:
+        description: 'SHA256 of the DMG'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update cask
+        run: |
+          VERSION="${{ github.event.client_payload.version || github.event.inputs.version }}"
+          SHA256="${{ github.event.client_payload.sha256 || github.event.inputs.sha256 }}"
+
+          cat > Casks/humanboard.rb << EOF
+          cask "humanboard" do
+            version "$VERSION"
+            sha256 "$SHA256"
+
+            url "https://github.com/manav03panchal/humanboard/releases/download/v#{version}/Humanboard.dmg"
+            name "Humanboard"
+            desc "Desktop productivity app"
+            homepage "https://github.com/manav03panchal/humanboard"
+
+            depends_on macos: ">= :big_sur"
+
+            app "Humanboard.app"
+          end
+          EOF
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          VERSION="${{ github.event.client_payload.version || github.event.inputs.version }}"
+          git add Casks/humanboard.rb
+          git commit -m "Update humanboard to v$VERSION"
+          git push

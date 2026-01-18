@@ -10,10 +10,4 @@ cask "humanboard" do
   depends_on macos: ">= :big_sur"
 
   app "Humanboard.app"
-
-  postflight do
-    system_command "/usr/bin/xattr",
-                   args: ["-cr", "#{appdir}/Humanboard.app"],
-                   sudo: true
-  end
 end

@@ -1,6 +1,6 @@
 cask "humanboard" do
-  version "0.1.0"
-  sha256 "9cbc56c84fd1f4a8fcb719810ee8cae25f099a86a4b9d84569884b6ee1f5691d"
+  version "0.1.1"
+  sha256 "e39b2f5de1cfbd5d27ce33252db053283da703bb77004c38471837b166d87c11"
 
   url "https://github.com/manav03panchal/humanboard/releases/download/v#{version}/Humanboard.dmg"
   name "Humanboard"
